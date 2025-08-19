@@ -1,4 +1,3 @@
-The command for downloading the data ('participants' parameter could be removed;
-if it was not it should be changed):
+Instruction for downloading the package for Spacy:
 
-python source/epic_downloader.py --videos --participants ... --output-path 'data/raw'
+python -m spacy download en_core_web_sm
