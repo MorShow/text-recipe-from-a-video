@@ -1,9 +1,9 @@
 import spacy
 
 
-class AnnotationExtractor:
+class ParserAnnotationExtractor:
     def __init__(self):
-        self.core = spacy.load("en_core_web_sm")
+        self.core = spacy.load("en_core_web_lg")
 
     def extract(self, text):
         document = self.core(text.lower())
