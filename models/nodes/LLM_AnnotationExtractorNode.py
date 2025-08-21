@@ -75,3 +75,8 @@ class LLMAnnotationExtractor:
         trainer.train()
         trainer.save_model("models/triplet_extractor/final")
         self._tokenizer.save_pretrained("models/triplet_extractor/final")
+
+
+if __name__ == "__main__":
+    extractor = LLMAnnotationExtractor()
+    extractor.train()

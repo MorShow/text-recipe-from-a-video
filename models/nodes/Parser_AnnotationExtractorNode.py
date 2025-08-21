@@ -79,7 +79,7 @@ if __name__ == "__main__":
         "Place a piece of bread at the top"
     ]
 
-    extractor = AnnotationExtractor()
+    extractor = ParserAnnotationExtractor()
     for ex in examples:
         print('1st:', ex, "->", extractor.extract(ex))
         print('2nd:', ex, "->", extractor.extract2(ex))
