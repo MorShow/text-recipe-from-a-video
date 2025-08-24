@@ -1,0 +1,5 @@
+tracking_node:
+  first_track_thresh: 0.5
+  second_track_thresh: 0.3
+  match_thresh: 0.8
+  track_buffer: 30
