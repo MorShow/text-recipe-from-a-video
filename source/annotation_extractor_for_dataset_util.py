@@ -1,3 +1,5 @@
+from source.config import PROCESSED_DATA
+
 import json
 import logging
 from pathlib import Path
@@ -86,6 +88,7 @@ def process_file(in_path: str | Path, out_path: str | Path):
             new_entry = {
                 "video_id": info.get("video_id"),
                 "segment_id": info.get("segment_id"),
+                "segment_time": info.get("segment_time"),
                 "sentence": sentence,
                 "annotations": triplets if triplets else info["annotations"]
             }
@@ -97,6 +100,6 @@ def process_file(in_path: str | Path, out_path: str | Path):
 
 
 if __name__ == "__main__":
-    in_path = project_root / "data" / "processed" / "youcookii_annotations_small.jsonl"
-    out_path = project_root / "data" / "processed" / "youcookii_annotations_small_processed.jsonl"
+    in_path = PROCESSED_DATA / "youcookii_annotations_small.jsonl"
+    out_path = PROCESSED_DATA / "youcookii_annotations_small_processed.jsonl"
     process_file(in_path, out_path)

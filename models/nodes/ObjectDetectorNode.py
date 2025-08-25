@@ -1,3 +1,4 @@
+from source.config import MODELS_DIR
 from models.elements import FrameElement
 
 import os
@@ -8,14 +9,13 @@ import yaml
 from ultralytics import YOLO
 
 project_root = Path(__file__).parent
-WEIGHTS_DIR = project_root / 'models' / 'weights'
 
 
 class ObjectDetector:
     def __init__(self, config) -> None:
         with open(config["detection_node"], "r") as file:
             config_yolo = yaml.load(file, Loader=yaml.FullLoader)["detection_node"]
-        self.model = YOLO(os.path.join(WEIGHTS_DIR, config_yolo["weight_pth"]), task='detect')
+        self.model = YOLO(os.path.join(str(MODELS_DIR), config_yolo["weight_pth"]), task='detect')
         self.classes = self.model.names
         self.conf = config_yolo["confidence"]
         self.iou = config_yolo["iou"]

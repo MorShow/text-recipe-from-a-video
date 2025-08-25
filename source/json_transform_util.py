@@ -1,7 +1,6 @@
-import os
 import json
 from pathlib import Path
-from typing import Any
+from source.config import RAW_DATA, PROCESSED_DATA
 
 project_root = Path(__file__).resolve().parents[1]
 
@@ -14,21 +13,22 @@ def json_transform(input_path: str | Path):
     for recipe_id, video_dict in json_dict.items():
         for annotation in video_dict['annotations']:
             segment_id = annotation['id']
+            segment_time = annotation['segment']
             sentence = annotation['sentence']
 
             final_dict = {
                 "video_id": recipe_id,
                 "segment_id": segment_id,
+                "segment_time": segment_time,
                 "sentence": sentence,
                 "annotations": {"action": None, "noun": None, "target": None}
             }
 
             result.append(final_dict)
 
-    json.dump(result,
-              open(project_root / 'data' / 'processed' / 'youcookii_annotations_extracted.jsonl', 'w'))
+    json.dump(result, open(PROCESSED_DATA / 'youcookii_annotations_extracted.jsonl', 'w'))
 
 
 if __name__ == '__main__':
-    json_file = project_root / 'data' / 'raw' / 'youcookII' / 'annotations' / 'youcookii_annotations_trainval.json'
+    json_file = RAW_DATA / 'youcookII' / 'annotations' / 'youcookii_annotations_trainval.json'
     json_transform(json_file)
