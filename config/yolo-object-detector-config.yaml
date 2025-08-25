@@ -1,5 +1,5 @@
 detection_node:
-  weight_pth: "..\\weights\\yolov8m.pt"
+  weight_pth: "yolov8m.pt"
   confidence: 0.25
   iou: 0.45
   imgsz: 640

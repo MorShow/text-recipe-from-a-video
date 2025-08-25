@@ -1,3 +1,4 @@
 data/raw/youcookII/training
 .idea
 .env
+test_pipeline.py
