@@ -34,9 +34,9 @@ class ObjectDetector:
         source.box_confidence_scores = results[0].boxes.conf
         source.box_class_ids = results[0].boxes.cls
         source.box_tracker_id = results[0].boxes.id
-        source.box_names = results[0].names
+        source.box_names = [results[0].names[i] for i in source.box_class_ids.tolist()]
 
         if isinstance(save_path, str) or isinstance(save_path, Path):
             results[0].save(save_path if isinstance(save_path, str) else save_path.as_posix())
 
-        return results
+        return source

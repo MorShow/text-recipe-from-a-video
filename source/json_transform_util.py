@@ -5,7 +5,7 @@ from source.config import RAW_DATA, PROCESSED_DATA
 project_root = Path(__file__).resolve().parents[1]
 
 
-def json_transform(input_path: str | Path):
+def json_transform(input_path: str | Path, output_filename: str):
     json_input = json.load(open(input_path, 'r'))
     json_dict = json_input['database']
     result = []
@@ -26,9 +26,9 @@ def json_transform(input_path: str | Path):
 
             result.append(final_dict)
 
-    json.dump(result, open(PROCESSED_DATA / 'youcookii_annotations_extracted.jsonl', 'w'))
+    json.dump(result, open(PROCESSED_DATA / output_filename, 'w'))
 
 
 if __name__ == '__main__':
     json_file = RAW_DATA / 'youcookII' / 'annotations' / 'youcookii_annotations_trainval.json'
-    json_transform(json_file)
+    json_transform(json_file, 'youcookii_annotations_extracted.jsonl')
