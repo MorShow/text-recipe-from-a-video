@@ -23,7 +23,9 @@ class VideoReader:
         self.stream = cv2.VideoCapture(self.video_pth)
 
         self.skip_secs = config["skip_secs"]  # how many seconds you want to skip (the end of the video)
-        self.frames_ratio = config["frames_ratio"]
+        self.frames_ratio = config["frames_ratio"] if config["frames_ratio"] else self.stream.get(cv2.CAP_PROP_FPS)
+        self.frames_count = int(self.stream.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.seconds = int(self.frames_count / self.frames_ratio)
         self.last_frame_timestamp = -1
         self.first_timestamp = 0
 
@@ -64,4 +66,4 @@ class VideoReader:
 
             frame_number += self.frames_ratio
 
-            yield FrameElement(self.video_pth, frame, timestamp, frame_number)
+            yield FrameElement(self.video_pth, frame, timestamp, frame_number, self.seconds)

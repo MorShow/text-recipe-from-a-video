@@ -9,3 +9,5 @@ DATA = project_root / 'data'
 RAW_DATA = DATA / 'raw'
 PROCESSED_DATA = DATA / 'processed'
 FINAL_DATA = DATA / 'final'
+
+CLASS_NAMES = ["margarine", "bread", "cheese", "pan", "sandwich"]

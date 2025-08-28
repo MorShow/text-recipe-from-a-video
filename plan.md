@@ -5,3 +5,7 @@ python -m spacy download en_core_web_lg
 2) Command for the Ollama Gemma3-4B quantized model (how to get):
 
 ollama pull gemma3:4b-it-qat
+
+3) How to install CLIP?
+
+pip install git+https://github.com/openai/CLIP.git
