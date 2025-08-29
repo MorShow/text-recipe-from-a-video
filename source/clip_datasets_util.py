@@ -1,13 +1,16 @@
-from numpy import ndarray, dtype, float64
+from source.config import CLASS_NAMES, PROCESSED_DATA, RAW_DATA, CONFIGS_DIR
+from models.elements import VideoElement
+from models.nodes import VideoReader, ObjectDetector, load_videos
 
-from source.config import CLASS_NAMES, PROCESSED_DATA, RAW_DATA
-
+import os
 import json
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
 import numpy as np
 import cv2
+from numpy import ndarray, dtype, float64
 
 
 class CLIPDatasetsUtil:
@@ -17,19 +20,18 @@ class CLIPDatasetsUtil:
         with open(input_json, 'r') as file:
             self._json_dir = json.loads(file.read())
 
-    def create_matrix(self, video_id: str) -> tuple[str, ndarray]:
+    def create_matrix(self, source: VideoElement) -> ndarray:
+        seconds = source.video_seconds
         matrix = np.zeros((seconds, self.vector_dim))
-        list_to_check = [d for d in self._json_dir if d['video_id'] == video_id]
+        list_to_check = [d for d in self._json_dir if d['video_id'] == source.video_id]
 
         for d in list_to_check:
             start, end = d['segment_time']
             vector = np.zeros(self.vector_dim)
-            print(d)
 
             for annotation in d['annotations']:
                 noun = annotation['noun']
                 target = annotation['target']
-                print(noun, target)
 
                 try:
                     noun_index = CLASS_NAMES.index(noun)
@@ -46,10 +48,32 @@ class CLIPDatasetsUtil:
 
             matrix[start:end] = vector
 
-        return video_id, matrix
+        return matrix
+
+    def create_dataset(self, input_dir: str | Path) -> tuple[pd.DataFrame, dict]:
+        """Input format:
+            <input_directory>
+            ---- <batch_1>
+            -------- <video_1>
+            -------- <video_2>
+            -------- ...
+            ---- <batch_2>
+            -------- <video_1>
+            -------- ...
+            ---- ...
+        """
+
+        result_df = pd.DataFrame(columns=['matrix'])
+        result_dict = load_videos(input_dir)
+
+        for index, video in result_dict.items():
+            matrix = self.create_matrix(video)
+            result_df.loc[index] = {'matrix': matrix}
+
+        return result_df, result_dict
 
 
 if __name__ == '__main__':
     util = CLIPDatasetsUtil(PROCESSED_DATA / 'youcookii_annotations_small_processed.jsonl')
-    matrix = util.create_matrix(RAW_DATA / 'youcookII' / 'training' / '113' / 'GLd3aX16zBg.mkv')
-    print(matrix[90:120])
+    df = util.create_dataset(RAW_DATA / 'youcookII' / 'training')
+    df.to_csv(PROCESSED_DATA / 'clip_training' / 'small_training.csv')

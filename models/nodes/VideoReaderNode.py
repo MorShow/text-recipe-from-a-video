@@ -14,7 +14,7 @@ class VideoReader:
     """Node for reading video frames from a video file."""
 
     def __init__(self, config: dict) -> None:
-        self.video_pth = config["src"]
+        self.video_pth = str(config["src"])
         assert (
                 os.path.isfile(self.video_pth)
                 or "://" in self.video_pth

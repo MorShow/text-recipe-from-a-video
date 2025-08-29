@@ -1,4 +1,4 @@
-from source.config import RAW_DATA, CONFIGS_DIR
+from source.config import RAW_DATA, CONFIGS_DIR, CLASS_NAMES
 from models.nodes import VideoReader
 from models.elements import FrameElement
 
@@ -10,7 +10,7 @@ from PIL import Image
 
 
 class CLIPObjectDetector:
-    _class_names = ["margarine", "bread", "cheese", "pan", "sandwich"]
+    _class_names = CLASS_NAMES
 
     def __init__(self) -> None:
         self._device = "cuda" if torch.cuda.is_available() else "cpu"

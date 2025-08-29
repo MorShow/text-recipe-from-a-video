@@ -12,6 +12,8 @@ class FrameElement:
                  seconds: Optional[int] = None,
                  ) -> None:
         self.video_path = path
+        video_id = self.video_path.split('\\')[-1]
+        self.video_id = video_id[:video_id.find('.mkv')]
         self.video_seconds = seconds
         self.frame = frame
         self.timestamp = timestamp
@@ -28,6 +30,7 @@ class FrameElement:
                  show_frame: bool = False,
                  show_embedding: bool = False) -> str:
         representation = f'''
+            Video ID: {self.video_id},
             Source video path: {self.video_path},
             The length of the video (in seconds): {self.video_seconds},
             Timestamp: {self.timestamp},

@@ -4,6 +4,11 @@ import os
 import json
 from source.config import RAW_DATA, PROCESSED_DATA, CONFIGS_DIR
 
+
+class ObjectDetectorT:
+    def __init__(self):
+        pass
+
 if __name__ == '__main__':
     annotations_dict = json.load(open(PROCESSED_DATA / 'youcookii_annotations_small_processed.jsonl', 'r'))
     list_segments = []
