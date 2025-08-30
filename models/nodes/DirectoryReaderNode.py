@@ -4,14 +4,14 @@ from models.elements import VideoElement
 from pathlib import Path
 
 
-def load_videos(input_dir: str | Path) -> dict[str, VideoElement]:
+def load_videos(input_dir: str | Path) -> dict[str, dict]:
     base_path = Path(input_dir)
     videos_dict = dict()
 
     for video_file in base_path.rglob("*.mkv"):
         video_element = VideoElement(video_file)
         video_element.initiate()
-        videos_dict[video_element.video_id] = video_element
+        videos_dict[video_element.video_id] = video_element.return_dict()
 
     return videos_dict
 

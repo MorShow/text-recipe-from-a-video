@@ -19,3 +19,13 @@ class VideoElement:
         self.frame_ratio = cap.get(cv2.CAP_PROP_FPS)
         self.video_seconds = int(self.frame_count / self.frame_ratio)
         cap.release()
+
+    def return_dict(self) -> dict:
+        return {
+            'video_path': str(self.video_path),
+            'video_id': self.video_id,
+            'frame_count': self.frame_count,
+            'frame_ratio': self.frame_ratio,
+            'video_seconds': self.video_seconds,
+            'matrix': self.matrix
+        }
