@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset
+import torch
 
 
 class CLIPImageTextDataset(Dataset):
@@ -17,6 +18,7 @@ class CLIPImageTextDataset(Dataset):
         self._length = 0
         self.images = {}
         self.captions = {}
+        self.initiate()
 
     def initiate(self):
         if isinstance(self._video_data, list):
@@ -25,8 +27,6 @@ class CLIPImageTextDataset(Dataset):
             result_df = pd.read_pickle(result_df)
             with open(videos_dict, 'r') as f:
                 videos_dict = json.load(f)
-            # print(result_df.head())
-            # print(videos_dict['GLd3aX16zBg'])
         else:
             result_df, videos_dict = self._util.create_dataset(self._video_data)
 
@@ -57,13 +57,23 @@ class CLIPImageTextDataset(Dataset):
     def __len__(self):
         return self._length
 
-    def __getitem__(self, idx: str):
+    def __getitem__(self, idx: str | int):
         """
-        :param idx: format - "<video_id>_<frame_number>"
+        :param idx: format (if string) - "<video_id>_<frame_number>"
         :return:
         """
-        video_idx, frame_number_idx = idx.split('_')
-        frame_number_idx = int(frame_number_idx)
+        video_idx, frame_number_idx = None, None
+
+        if isinstance(idx, str):
+            video_idx, frame_number_idx = idx.split('_')
+            frame_number_idx = int(frame_number_idx)
+        elif isinstance(idx, int):
+            for item_index, item in self.captions.items():
+                if idx < len(item):
+                    video_idx = item_index
+                    frame_number_idx = idx
+                else:
+                    idx -= len(item)
 
         image = self.images[video_idx][frame_number_idx]
         caption = self.captions[video_idx][frame_number_idx]
@@ -80,4 +90,5 @@ if __name__ == '__main__':
 
     clip_df.initiate()
     print(len(clip_df))
-    print(clip_df['GLd3aX16zBg_93'])
+    print(clip_df['GLd3aX16zBg_93'][0])
+    print(clip_df[93][0])

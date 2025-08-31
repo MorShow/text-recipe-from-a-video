@@ -1,3 +1,5 @@
+from typing import List
+
 from source.config import RAW_DATA, CONFIGS_DIR, CLASS_NAMES
 from models.nodes import VideoReader
 from models.elements import FrameElement
@@ -15,6 +17,22 @@ class CLIPObjectDetector:
     def __init__(self) -> None:
         self._device = "cuda" if torch.cuda.is_available() else "cpu"
         self._model, self._preprocess = clip.load("ViT-B/32", device=self._device)
+
+    @property
+    def preprocess(self):
+        return self._preprocess
+
+    @property
+    def model(self) -> torch.nn.Module:
+        return self._model
+
+    @property
+    def device(self) -> str:
+        return self._device
+
+    @property
+    def class_names(self) -> List[str]:
+        return self._class_names
 
     def process(self, source: FrameElement) -> FrameElement:
         frame_rgb = cv2.cvtColor(source.frame, cv2.COLOR_BGR2RGB)

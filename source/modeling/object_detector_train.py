@@ -1,46 +1,58 @@
-from models.nodes import ObjectDetector, VideoReader
+from models.nodes import CLIPObjectDetector, VideoReader
+from source.config import RAW_DATA, PROCESSED_DATA, CONFIGS_DIR
+from source.modeling.CLIPImageTextDataset import CLIPImageTextDataset
 
 import os
 import json
-from source.config import RAW_DATA, PROCESSED_DATA, CONFIGS_DIR
+
+import cv2
+import torch
+import clip
+from torch.utils.data import DataLoader
+from PIL import Image
 
 
 class ObjectDetectorT:
     def __init__(self):
         pass
 
+
 if __name__ == '__main__':
-    annotations_dict = json.load(open(PROCESSED_DATA / 'youcookii_annotations_small_processed.jsonl', 'r'))
-    list_segments = []
+    detector = CLIPObjectDetector()
+    detector_preprocess = detector.preprocess
+    detector_model = detector.model
+    dataset = CLIPImageTextDataset(PROCESSED_DATA / 'youcookii_annotations_small_processed.jsonl',
+                                   [PROCESSED_DATA / 'clip_training' / 'small_training.pkl',
+                                    PROCESSED_DATA / 'clip_training' / 'small_videos.json'])
 
-    for annotation in annotations_dict:
-        if annotation['video_id'] == 'GLd3aX16zBg':
-            list_segments.append(annotation)
+    optimizer = torch.optim.AdamW(detector_model.parameters(), lr=1e-15)
+    loss_fn = torch.nn.BCEWithLogitsLoss()
+    dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
-    config = {}
-    config['src'] = RAW_DATA / "youcookII" / "training" / "113" / "GLd3aX16zBg.mkv"
-    config['frames_ratio'] = 24
-    config['skip_secs'] = 0
-    config['confidence'] = 0.5
-    config['iou'] = 0.5
-    config['imgsz'] = (640, 480)
-    config['detection_node'] = os.path.join(CONFIGS_DIR, "yolo-object-detector-config.yaml")
+    with open(PROCESSED_DATA / 'clip_training' / 'small_videos.json', 'r') as file:
+        dictionary = json.load(file)
 
-    vr = VideoReader(config)
-    od = ObjectDetector(config)
-    print(f'Frames ratio: {vr.frames_ratio}')
+    for image, text in dataloader:
+        text = text.to(detector.device)
+        image = image[0].permute(1, 2, 0).cpu().numpy().astype("uint8")
+        frame_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        pil_image = Image.fromarray(frame_rgb)
+        image = detector_preprocess(pil_image).unsqueeze(0).to(detector.device)
+        text_processed = clip.tokenize(detector.class_names).to(detector.device)
 
-    for frame in vr.process():
-        frame = od.process(frame)
-        print(f'Frame number: {frame.frame_number}')
-        second = frame.frame_number / vr.frames_ratio
-        print(f'Second: {second}')
-        for segment in list_segments:
-            time_segment = segment['segment_time']
-            if second > time_segment[0] and second < time_segment[1]:
-                print(f'Detected objects: {frame.box_names}')
-                print(f'Ground truth: ', end='')
-                for annotation in segment['annotations']:
-                    print(f'{annotation["noun"]}, ', end='')
-                    print(f'{annotation["target"]}, ', end='')
-                print()
+        image_embedding = detector_model.encode_image(image)
+        text_embedding = detector_model.encode_text(text_processed)
+
+        image_embedding_norm = image_embedding / image_embedding.norm(dim=-1, keepdim=True).float()
+        text_embedding_norm = text_embedding / text_embedding.norm(dim=-1, keepdim=True).float()
+
+        logits = image_embedding_norm @ text_embedding_norm.t()
+        logits = logits.squeeze(0).to(torch.float32)
+        text = text.squeeze(0).to(torch.float32)
+        print(logits)
+        print(text)
+        loss = loss_fn(logits, text)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+        print(f'Loss: {loss}')
