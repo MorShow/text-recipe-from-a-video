@@ -4,6 +4,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 CONFIGS_DIR = project_root / 'config'
 MODELS_DIR = project_root / 'models'
+SAVED_MODELS = MODELS_DIR / 'saved'
 
 DATA = project_root / 'data'
 RAW_DATA = DATA / 'raw'

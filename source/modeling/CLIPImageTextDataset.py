@@ -12,7 +12,10 @@ import torch
 
 
 class CLIPImageTextDataset(Dataset):
-    def __init__(self, json_data: str | Path, video_data: str | Path | list):
+    def __init__(self,
+                 json_data: str | Path,
+                 video_data: str | Path | list[str | Path]
+                 ):
         self._util = CLIPDatasetsUtil(json_data)
         self._video_data = str(video_data) if isinstance(video_data, Path) else video_data
         self._length = 0
@@ -22,7 +25,7 @@ class CLIPImageTextDataset(Dataset):
 
     def initiate(self):
         if isinstance(self._video_data, list):
-            # Format: [<path_to_matrices_dataframe>, <path_to_videos_dict>]
+            # Format: [<path_to_matrices_dataframe>, <path_to_videos_dir>]
             result_df, videos_dict = self._video_data
             result_df = pd.read_pickle(result_df)
             with open(videos_dict, 'r') as f:
