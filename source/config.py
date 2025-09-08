@@ -13,3 +13,5 @@ FINAL_DATA = DATA / 'final'
 
 CLASS_NAMES = ["margarine", "bread", "cheese", "pan", "sandwich"]
 NUM_CLASSES = 5
+
+CACHE_DIR = MODELS_DIR / "saved" / "huggingface_cache"

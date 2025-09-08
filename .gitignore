@@ -4,3 +4,4 @@ data/raw/youcookII/training
 pipeline.py
 annotation_structure.py
 deleted_parts_of_code.py
+models/saved
