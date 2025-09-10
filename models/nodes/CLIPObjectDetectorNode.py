@@ -26,6 +26,10 @@ class CLIPObjectDetector:
     def model(self) -> torch.nn.Module:
         return self._model
 
+    @model.setter
+    def model(self, value: torch.nn.Module) -> None:
+        self._model = value
+
     @property
     def device(self) -> str:
         return self._device

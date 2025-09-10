@@ -11,7 +11,9 @@ RAW_DATA = DATA / 'raw'
 PROCESSED_DATA = DATA / 'processed'
 FINAL_DATA = DATA / 'final'
 
-CLASS_NAMES = ["margarine", "bread", "cheese", "pan", "sandwich"]
-NUM_CLASSES = 5
+CACHE_DIR = MODELS_DIR / 'saved' / 'huggingface_cache'
 
-CACHE_DIR = MODELS_DIR / "saved" / "huggingface_cache"
+REPORTS_FIGURES_DIR = project_root / 'reports' / 'figures'
+
+CLASS_NAMES = ['margarine', 'bread', 'cheese', 'pan', 'sandwich']
+NUM_CLASSES = 5
