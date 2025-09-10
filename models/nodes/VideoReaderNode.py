@@ -5,7 +5,7 @@ import logging
 from typing import Generator
 import cv2
 
-from models.elements import FrameElement
+from models.elements import VideoElement, FrameElement
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +28,9 @@ class VideoReader:
         self.seconds = int(self.frames_count / self.frames_ratio)
         self.last_frame_timestamp = -1
         self.first_timestamp = 0
+
+        self.video_element = VideoElement(self.video_pth)
+        self.video_element.initiate(self.frames_ratio)
 
         # self.break_element_sent = False
 
@@ -66,4 +69,5 @@ class VideoReader:
 
             frame_number += self.frames_ratio
 
+            self.video_element.frames_dict[timestamp] = frame
             yield FrameElement(self.video_pth, frame, timestamp, frame_number, self.seconds)
