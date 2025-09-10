@@ -1,21 +1,31 @@
 import React from "react";
-import RecipeCard from "../components/RecipeCard";
-import placeholder from "../assets/placeholder.jpg";
+import { useNavigate } from "react-router-dom";
 
 const recipes = [
-  { title: "Spaghetti Bolognese", description: "Classic Italian pasta.", image: placeholder },
-  { title: "Chicken Curry", description: "Spicy and creamy curry.", image: placeholder },
-  { title: "Vegetable Stir Fry", description: "Quick and healthy.", image: placeholder },
-  { title: "Pancakes", description: "Fluffy breakfast pancakes.", image: placeholder },
+  { id: "spaghetti", title: "Spaghetti Bolognese", color: "bg-red-400" },
+  { id: "curry", title: "Chicken Curry", color: "bg-green-400" },
+  { id: "stirfry", title: "Vegetable Stir Fry", color: "bg-blue-400" },
+  { id: "pancakes", title: "Pancakes", color: "bg-yellow-400" },
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8">Recipes</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="min-h-screen bg-white p-8">
+      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
+        🍽️ My Recipes
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {recipes.map((recipe) => (
-          <RecipeCard key={recipe.title} {...recipe} />
+          <div
+            key={recipe.id}
+            className={`cursor-pointer rounded-2xl shadow-lg p-6 text-white text-center font-semibold text-xl hover:scale-105 transform transition ${recipe.color}`}
+            onClick={() => navigate(`/recipe/${recipe.id}`)}
+          >
+            {recipe.title}
+          </div>
         ))}
       </div>
     </div>
